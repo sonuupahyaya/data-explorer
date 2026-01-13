@@ -6,6 +6,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { HistoryModule } from './history/history.module';
 import { SearchModule } from './search/search.module';
 import { ScraperModule } from './scraper/scraper.module';
+import { ImageProxyModule } from './image-proxy/image-proxy.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ScraperModule } from './scraper/scraper.module';
     ProductsModule,
     HistoryModule,
     SearchModule,
+    ImageProxyModule,
   ],
 })
 export class AppModule {}

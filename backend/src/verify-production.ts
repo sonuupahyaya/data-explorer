@@ -82,7 +82,7 @@ async function verifyProduction(): Promise<VerificationResult> {
     // ==========================================
     logger.log('2️⃣  Checking product images...');
     result.productsWithImages = await db.collection('products').countDocuments({
-      image_url: { $exists: true, $ne: null, $ne: '' },
+      image_url: { $exists: true, $nin: [null, ''] },
     });
 
     const imagePercentage = ((result.productsWithImages / result.totalProducts) * 100).toFixed(1);
@@ -145,7 +145,7 @@ async function verifyProduction(): Promise<VerificationResult> {
     // ==========================================
     logger.log('4️⃣  Checking source URLs...');
     result.productsWithSourceUrls = await db.collection('products').countDocuments({
-      source_url: { $exists: true, $ne: null, $ne: '' },
+      source_url: { $exists: true, $nin: [null, ''] },
     });
 
     const urlPercentage = ((result.productsWithSourceUrls / result.totalProducts) * 100).toFixed(1);
@@ -205,8 +205,8 @@ async function verifyProduction(): Promise<VerificationResult> {
     // CHECK 7: Database indexes
     // ==========================================
     logger.log('7️⃣  Checking database indexes...');
-    const indexes = await db.collection('products').getIndexes();
-    const indexNames = Object.keys(indexes);
+    const indexes = await db.collection('products').indexes();
+    const indexNames = indexes.map(idx => Object.keys(idx.key).join('_'));
 
     const expectedIndexes = ['source_id_1', 'source_url_1', 'title_text_author_text', 'price_1'];
     const missingIndexes = expectedIndexes.filter(idx =>

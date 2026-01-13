@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PlaywrightCrawler } from '@crawlee/playwright';
+import { proxyImageUrl } from '../image-proxy/image-url.util';
 
 export interface ScrapedNavigation {
   title: string;
@@ -299,33 +300,36 @@ export class RealScraper {
                   ? product.url
                   : new URL(product.url, this.baseUrl).href;
 
-                const fullImageUrl = product.image
-                  ? product.image.startsWith('http')
-                    ? product.image
-                    : new URL(product.image, this.baseUrl).href
-                  : '';
+                const rawImageUrl = product.image
+                   ? product.image.startsWith('http')
+                     ? product.image
+                     : new URL(product.image, this.baseUrl).href
+                   : '';
 
-                // Extract price
-                const priceMatch = product.priceText.match(/[\d.,]+/);
-                const price = priceMatch ? parseFloat(priceMatch[0].replace(/,/g, '')) : 0;
+                 // Proxy the image URL to bypass CORS and hotlink blocking
+                 const fullImageUrl = rawImageUrl ? proxyImageUrl(rawImageUrl) : '';
 
-                // Extract currency
-                const currencyMatch = product.priceText.match(/[£$€¥₹]/);
-                const currency = currencyMatch ? currencyMatch[0] : 'GBP';
+                 // Extract price
+                 const priceMatch = product.priceText.match(/[\d.,]+/);
+                 const price = priceMatch ? parseFloat(priceMatch[0].replace(/,/g, '')) : 0;
 
-                // Generate source ID from URL
-                const idMatch = fullUrl.match(/\/books\/([^\/?]+)/);
-                const sourceId = idMatch ? `wob_${idMatch[1]}` : `wob_${Date.now()}_${idx}`;
+                 // Extract currency
+                 const currencyMatch = product.priceText.match(/[£$€¥₹]/);
+                 const currency = currencyMatch ? currencyMatch[0] : 'GBP';
 
-                results.push({
-                  source_id: sourceId,
-                  title: product.title.substring(0, 255),
-                  author: product.author.substring(0, 255),
-                  price,
-                  currency,
-                  image_url: fullImageUrl,
-                  source_url: fullUrl,
-                });
+                 // Generate source ID from URL
+                 const idMatch = fullUrl.match(/\/books\/([^\/?]+)/);
+                 const sourceId = idMatch ? `wob_${idMatch[1]}` : `wob_${Date.now()}_${idx}`;
+
+                 results.push({
+                   source_id: sourceId,
+                   title: product.title.substring(0, 255),
+                   author: product.author.substring(0, 255),
+                   price,
+                   currency,
+                   image_url: fullImageUrl,
+                   source_url: fullUrl,
+                 });
 
                 seen.add(product.url);
                 this.logger.log(`✅ Found product: "${product.title.substring(0, 50)}"`);
@@ -433,6 +437,7 @@ export class RealScraper {
                 'img[alt*="cover"], img[alt*="book"], img[src*="cover"]',
               );
               if (imageEl) {
+                // Note: We'll proxy this in the backend after evaluation
                 result.image_url = (imageEl as HTMLImageElement).src || '';
               }
 
@@ -477,9 +482,14 @@ export class RealScraper {
             });
 
             Object.assign(emptyDetail, detail);
-          } catch (error) {
+
+            // Proxy the image URL to bypass CORS and hotlink blocking
+            if (emptyDetail.image_url) {
+              emptyDetail.image_url = proxyImageUrl(emptyDetail.image_url);
+            }
+            } catch (error) {
             this.logger.error('Error scraping product detail:', error);
-          }
+            }
       },
 
       async failedRequestHandler({ request }, error) {

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import { proxyImageUrl } from '../image-proxy/image-url.util';
 
 /**
  * World of Books Scraper using Axios + Cheerio
@@ -241,11 +242,14 @@ export class WorldOfBooksScraper {
             const fullUrl = productUrl.startsWith('http')
               ? productUrl
               : new URL(productUrl, this.baseUrl).href;
-            const fullImageUrl = imageUrl
+            const rawImageUrl = imageUrl
               ? imageUrl.startsWith('http')
                 ? imageUrl
                 : new URL(imageUrl, this.baseUrl).href
               : '';
+
+            // Proxy the image URL to bypass CORS and hotlink blocking
+            const fullImageUrl = rawImageUrl ? proxyImageUrl(rawImageUrl) : '';
 
             const priceMatch = priceText.match(/[\d.,]+/);
             const price = priceMatch
@@ -343,6 +347,11 @@ export class WorldOfBooksScraper {
 
       // Extract image
       detail.image_url = $('img[alt*="cover"], img[src*="cover"]').first().attr('src') || '';
+      
+      // Proxy the image URL to bypass CORS and hotlink blocking
+      if (detail.image_url) {
+        detail.image_url = proxyImageUrl(detail.image_url);
+      }
 
       // Extract other details from specs/table
       $('dt, [class*="label"]').each((_, el) => {

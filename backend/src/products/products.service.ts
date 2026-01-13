@@ -5,6 +5,7 @@ import { Product, ProductDocument } from '../schemas/product.schema';
 import { Review, ReviewDocument } from '../schemas/review.schema';
 import { Category, CategoryDocument } from '../schemas/category.schema';
 import { ScraperService } from '../scraper/scraper.service';
+import { ImageProxyService } from '../image-proxy/image-proxy.service';
 
 interface GetProductsOptions {
   category?: string;
@@ -25,7 +26,24 @@ export class ProductsService {
     @InjectModel(Review.name) private reviewModel: Model<ReviewDocument>,
     @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
     private scraperService: ScraperService,
+    private imageProxyService: ImageProxyService,
   ) {}
+
+  /**
+   * Convert original image URL to proxied URL
+   * This prevents CORS and hotlink blocking issues
+   */
+  private getProxiedImageUrl(originalUrl: string | null): string | null {
+    if (!originalUrl) return null;
+    
+    try {
+      const apiUrl = process.env.API_URL || 'http://localhost:3001';
+      return `${apiUrl}/api/image?url=${encodeURIComponent(originalUrl)}`;
+    } catch (error) {
+      this.logger.warn(`Failed to create proxied URL for: ${originalUrl}`);
+      return originalUrl; // Fallback to original
+    }
+  }
 
   /**
    * Get paginated products
@@ -76,10 +94,16 @@ export class ProductsService {
       .lean()
       .exec();
 
+    // Convert image URLs to proxied URLs
+    const productsWithProxiedImages = products.map(product => ({
+      ...product,
+      image_url: this.getProxiedImageUrl(product.image_url),
+    }));
+
     this.logger.log(`✅ Found ${products.length} products (total: ${total})`);
 
     return {
-      data: products,
+      data: productsWithProxiedImages,
       pagination: {
         page,
         limit,
@@ -111,8 +135,10 @@ export class ProductsService {
 
     this.logger.log(`✅ Product found: ${product.title} with ${reviews.length} reviews`);
 
+    const productObj = product.toObject();
     return {
-      ...product.toObject(),
+      ...productObj,
+      image_url: this.getProxiedImageUrl(productObj.image_url),
       reviews,
     };
   }

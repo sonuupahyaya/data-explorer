@@ -271,9 +271,7 @@ class ProductionScraper {
         this.logger.warn(`    Error: ${error.message}`);
       },
 
-      async requestHandlerTimeoutMillis() {
-        return 60000; // 60 second timeout per request
-      },
+      requestHandlerTimeoutSecs: 60,
     });
 
     try {

@@ -6,6 +6,7 @@ import { Category, CategorySchema } from '../schemas/category.schema';
 import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
 import { ScraperModule } from '../scraper/scraper.module';
+import { ImageProxyModule } from '../image-proxy/image-proxy.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ScraperModule } from '../scraper/scraper.module';
       { name: Category.name, schema: CategorySchema },
     ]),
     ScraperModule,
+    ImageProxyModule,
   ],
   controllers: [ProductsController],
   providers: [ProductsService],
