@@ -5,7 +5,7 @@ export type NavigationDocument = Navigation & Document;
 
 @Schema({ timestamps: true })
 export class Navigation {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, unique: true, index: true })
   slug: string;
 
   @Prop({ required: true })
@@ -28,5 +28,4 @@ export class Navigation {
 }
 
 export const NavigationSchema = SchemaFactory.createForClass(Navigation);
-NavigationSchema.index({ slug: 1 });
 NavigationSchema.index({ last_scraped_at: 1 });

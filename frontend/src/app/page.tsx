@@ -2,245 +2,248 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { BookOpen, Search, Filter, Star, Database, Smartphone, ArrowRight, Zap, MessageSquare, PoundSterling } from 'lucide-react';
+import useSWR from 'swr';
+import { getBooks, getCategories } from '@/lib/api';
+import { ProductGrid } from '@/components';
+import { storageManager } from '@/lib/storage';
+import { ArrowRight, Sparkles } from 'lucide-react';
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 interface Product {
-  _id: string;
+  _id?: string;
+  id?: string;
   title: string;
-  author: string;
-  price: number;
-  currency: string;
+  image?: string;
   image_url?: string;
-  rating_avg?: number;
-  reviews_count?: number;
-  source_url?: string;
+  price?: number;
+  rating?: number;
+  author?: string;
 }
 
-interface PaginationData {
-  page: number;
-  limit: number;
-  total: number;
-  pages: number;
-}
+export default function Home() {
+  const [isMounted, setIsMounted] = useState(false);
 
-export default function HomePage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [pagination, setPagination] = useState<PaginationData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: categoriesData, isLoading: categoriesLoading } = useSWR('categories', getCategories, {
+    dedupingInterval: 0,
+    revalidateOnFocus: false,
+  });
+
+  const { data: booksData, isLoading: booksLoading } = useSWR('featured-books', () => getBooks({ limit: 12 }), {
+    dedupingInterval: 0,
+    revalidateOnFocus: false,
+  });
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          'http://localhost:3001/api/products?sample=true&limit=50'
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch products');
-        }
-
-        const data = await response.json();
-        setProducts(data.data || []);
-        setPagination(data.pagination || null);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load products');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
+    setIsMounted(true);
   }, []);
 
+  const categories: Category[] = Array.isArray(categoriesData) ? categoriesData : [];
+  const products: Product[] = booksData?.data || [];
+
   return (
-    <div className="space-y-16">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 text-white rounded-2xl p-16 text-center shadow-2xl">
-        <h1 className="text-6xl font-bold mb-6 leading-tight">Discover Your Next Read</h1>
-        <p className="text-xl mb-10 opacity-95 max-w-2xl mx-auto leading-relaxed">
-          Explore thousands of books from World of Books with powerful search, filtering, and intelligent recommendations
-        </p>
-        <a
-          href="/search"
-          className="inline-block bg-white text-blue-600 px-10 py-4 rounded-lg font-semibold hover:bg-slate-50 transition shadow-lg hover:shadow-xl"
-        >
-          Start Searching
-        </a>
-      </section>
+    <div className="w-full">
+      {/* ========== HERO SECTION ========== */}
+      <section className="bg-gradient-hero relative overflow-hidden py-20 md:py-32 lg:py-40">
+        {/* Subtle animated background */}
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-0 right-0 h-96 w-96 rounded-full bg-gradient-to-br from-blue-300 to-transparent blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 h-96 w-96 rounded-full bg-gradient-to-tr from-teal-300 to-transparent blur-3xl"></div>
+        </div>
 
-      {/* Featured Products Section */}
-      <section>
-        <h2 className="text-4xl font-bold mb-10">Featured Books</h2>
-        
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className="bg-gradient-to-b from-slate-200 to-slate-300 rounded-xl h-80 animate-pulse" />
-            ))}
-          </div>
-        ) : error ? (
-          <div className="bg-red-50/80 backdrop-blur border border-red-200 rounded-xl p-8 text-red-900">
-            <p className="font-semibold text-lg">Failed to load products</p>
-            <p className="text-sm mt-2">{error}</p>
-          </div>
-        ) : products.length === 0 ? (
-          <div className="bg-amber-50/80 backdrop-blur border border-amber-200 rounded-xl p-8 text-amber-900 text-center">
-            <p className="font-semibold text-lg">No products available yet</p>
-            <p className="text-sm mt-2">Run the seed script to populate sample data: npm run seed:sample-products</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {products.slice(0, 12).map((product) => (
-                <Link
-                  key={product._id}
-                  href={`/product/${product._id}`}
-                  className="group bg-white rounded-xl shadow-md hover:shadow-2xl overflow-hidden transition duration-300 hover:-translate-y-1"
-                >
-                  {/* Product Image */}
-                  <div className="w-full h-48 bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden flex items-center justify-center">
-                    {product.image_url ? (
-                      <img
-                        src={product.image_url}
-                        alt={product.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = 'https://via.placeholder.com/200x300?text=' + encodeURIComponent(product.title);
-                        }}
-                      />
-                    ) : (
-                      <BookOpen className="w-12 h-12 text-slate-400" />
-                    )}
-                  </div>
-
-                  {/* Product Info */}
-                  <div className="p-5">
-                    <h3 className="font-semibold text-sm text-slate-900 line-clamp-2 group-hover:text-blue-600 transition">
-                      {product.title}
-                    </h3>
-                    <p className="text-xs text-slate-600 mt-2">by {product.author}</p>
-
-                    {/* Rating */}
-                    {product.rating_avg && product.rating_avg > 0 && (
-                      <div className="flex items-center mt-3 gap-2">
-                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" aria-hidden="true" />
-                        <span className="text-xs text-slate-600">
-                          {product.rating_avg.toFixed(1)} ({product.reviews_count})
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Price */}
-                    <div className="mt-4 flex items-center justify-between">
-                      <div className="flex items-center gap-1">
-                        <PoundSterling className="w-5 h-5 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent" aria-hidden="true" />
-                        <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                          {product.price.toFixed(2)}
-                        </span>
-                      </div>
-                      <span className="text-xs text-slate-500">{product.currency}</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+        {/* Content */}
+        <div className="container-narrow relative z-10">
+          <div className="space-y-8 text-center max-w-3xl mx-auto">
+            {/* Badge */}
+            <div className="inline-flex justify-center">
+              <div className="badge-primary">
+                <Sparkles size={16} />
+                Discover thousands of books
+              </div>
             </div>
 
-            {/* View All Products Button */}
-            <div className="mt-10 text-center">
-              <Link
-                href="/search"
-                className="inline-block bg-gradient-to-r from-blue-600 to-blue-700 text-white px-10 py-4 rounded-lg font-semibold hover:shadow-xl transition shadow-lg"
-              >
-                View All {pagination?.total || 0} Products
+            {/* Headline */}
+            <h1 className="text-hero">
+              Your Gateway to
+              <span className="block text-gradient">Endless Reading</span>
+            </h1>
+
+            {/* Subheading */}
+            <p className="text-lg md:text-xl text-muted max-w-2xl mx-auto">
+              Explore thousands of carefully curated books from World of Books. Find your next favorite read with
+              advanced search and discover hidden literary treasures.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <Link href="/category/all" className="btn-primary">
+                Browse All Books
+                <ArrowRight size={18} strokeWidth={2} />
+              </Link>
+              <Link href="/about" className="btn-secondary">
+                Learn Our Story
               </Link>
             </div>
-          </>
-        )}
-      </section>
-
-      {/* Browse by Category */}
-      <section>
-        <h2 className="text-4xl font-bold mb-10">Browse by Category</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <a
-            href="/category/fiction"
-            className="p-8 bg-white border border-slate-200 rounded-xl hover:shadow-xl hover:border-blue-400 transition block group hover:-translate-y-1"
-          >
-            <BookOpen className="w-8 h-8 mb-4 text-blue-600" />
-            <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-600 transition">
-              Fiction
-            </h3>
-            <p className="text-slate-600 mb-5">Explore fiction novels and stories</p>
-            <p className="text-blue-600 font-semibold flex items-center gap-1">Explore <ArrowRight className="w-4 h-4" /></p>
-          </a>
-
-          <a
-            href="/category/non-fiction"
-            className="p-8 bg-white border border-slate-200 rounded-xl hover:shadow-xl hover:border-blue-400 transition block group hover:-translate-y-1"
-          >
-            <Filter className="w-8 h-8 mb-4 text-blue-600" />
-            <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-600 transition">
-              Non-Fiction
-            </h3>
-            <p className="text-slate-600 mb-5">Discover educational and informative books</p>
-            <p className="text-blue-600 font-semibold flex items-center gap-1">Explore <ArrowRight className="w-4 h-4" /></p>
-          </a>
-
-          <a
-            href="/search"
-            className="p-8 bg-white border border-slate-200 rounded-xl hover:shadow-xl hover:border-blue-400 transition block group hover:-translate-y-1"
-          >
-            <Search className="w-8 h-8 mb-4 text-blue-600" />
-            <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-600 transition">
-              All Categories
-            </h3>
-            <p className="text-slate-600 mb-5">Search across all books and categories</p>
-            <p className="text-blue-600 font-semibold flex items-center gap-1">Browse <ArrowRight className="w-4 h-4" /></p>
-          </a>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-16 rounded-2xl text-white">
-        <h2 className="text-4xl font-bold mb-12 text-center">Why Use Our Platform?</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center p-6 bg-white/10 backdrop-blur rounded-xl border border-white/10 hover:border-blue-400/50 transition">
-            <Search className="w-12 h-12 mb-4 mx-auto text-blue-400" />
-            <h3 className="text-xl font-semibold mb-3">Advanced Search</h3>
-            <p className="text-slate-200 leading-relaxed">
-              Full-text search across thousands of books from World of Books with intelligent autocomplete
-            </p>
-          </div>
-          <div className="text-center p-6 bg-white/10 backdrop-blur rounded-xl border border-white/10 hover:border-blue-400/50 transition">
-            <Filter className="w-12 h-12 mb-4 mx-auto text-blue-400" />
-            <h3 className="text-xl font-semibold mb-3">Smart Filtering</h3>
-            <p className="text-slate-200 leading-relaxed">Filter by price, rating, author, and more to find exactly what you need</p>
-          </div>
-          <div className="text-center p-6 bg-white/10 backdrop-blur rounded-xl border border-white/10 hover:border-blue-400/50 transition">
-            <Zap className="w-12 h-12 mb-4 mx-auto text-yellow-400" />
-            <h3 className="text-xl font-semibold mb-3">Real-Time Data</h3>
-            <p className="text-slate-200 leading-relaxed">
-              Live scraping from World of Books keeps our data fresh and current
-            </p>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 text-white rounded-2xl p-16 text-center shadow-2xl">
-        <h2 className="text-4xl font-bold mb-6">Ready to Find Your Next Read?</h2>
-        <p className="text-lg opacity-95 mb-10">Start exploring thousands of books with our powerful discovery platform</p>
-        <a
-          href="/search"
-          className="inline-block bg-white text-blue-600 px-10 py-4 rounded-lg font-semibold hover:bg-slate-50 transition shadow-lg hover:shadow-xl"
-        >
-          Search Now
-        </a>
+      {/* ========== CATEGORIES SECTION ========== */}
+      {categories.length > 0 && (
+        <section className="py-20 md:py-32">
+          <div className="container-narrow">
+            <div className="space-y-16">
+              {/* Section Header */}
+              <div className="space-y-4 text-center max-w-2xl mx-auto">
+                <h2 className="text-section-title">Browse by Category</h2>
+                <p className="text-muted">Explore our collection organized by genre and literary interest</p>
+              </div>
+
+              {/* Categories Grid */}
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {categories.slice(0, 4).map((category) => (
+                  <Link key={category.id} href={`/category/${category.slug}`}>
+                    <div className="card-premium p-8 h-full flex flex-col justify-between hover-lift">
+                      <div className="space-y-3">
+                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-100 to-teal-100 dark:from-blue-950 dark:to-teal-950 flex items-center justify-center text-lg">
+                          {['📚', '🔍', '✨', '🌟'][0]}
+                        </div>
+                        <h3 className="text-card-title text-accent hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                          {category.name}
+                        </h3>
+                      </div>
+                      <p className="text-subtle flex items-center gap-2 group">
+                        Explore
+                        <ArrowRight
+                          size={16}
+                          strokeWidth={2}
+                          className="group-hover:translate-x-0.5 transition-transform"
+                        />
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              {/* View All Link */}
+              {categories.length > 4 && (
+                <div className="pt-4 text-center">
+                  <Link href="/category/all" className="btn-ghost">
+                    View All Categories
+                    <ArrowRight size={18} strokeWidth={2} />
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ========== FEATURED BOOKS SECTION ========== */}
+      <section
+        className="py-20 md:py-32 relative overflow-hidden"
+        style={{ background: 'radial-gradient(circle at top left, #1A1F2B, #0B0D10 70%)' }}
+      >
+        <div className="container-narrow">
+          <div className="space-y-16 relative z-10">
+            {/* Section Header */}
+            <div className="space-y-4 text-center max-w-2xl mx-auto">
+              <h2
+                className="text-section-title text-white"
+                style={{ textShadow: '0 2px 16px rgba(59, 164, 255, 0.15)' }}
+              >
+                Featured Collection
+              </h2>
+              <p className="text-muted">Handpicked selections from our carefully curated library</p>
+            </div>
+
+            {/* Products Grid */}
+            <ProductGrid products={products} isLoading={booksLoading} columns={4} />
+
+            {/* View All Button */}
+            <div className="pt-8 text-center">
+              <Link href="/category/all" className="btn-secondary">
+                View All Books
+                <ArrowRight size={18} strokeWidth={2} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== VIEWING HISTORY SECTION ========== */}
+      {isMounted && <ViewingHistory />}
+
+      {/* ========== FINAL CTA SECTION ========== */}
+      <section className="bg-gradient-to-r from-blue-600 to-teal-600 dark:from-blue-700 dark:to-teal-700 py-16 md:py-24">
+        <div className="container-narrow text-center space-y-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-white">Ready to Start Reading?</h2>
+          <p className="text-lg text-blue-50 max-w-2xl mx-auto">
+            Join thousands of readers discovering their next favorite book. Our collection spans every genre imaginable.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/category/all" className="btn-primary bg-white text-blue-600 hover:bg-gray-100">
+              Start Exploring
+            </a>
+            <a
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-white text-white font-semibold px-8 py-3 hover:bg-white hover:bg-opacity-10 transition-all duration-250"
+            >
+              Contact Us
+            </a>
+          </div>
+        </div>
       </section>
     </div>
+  );
+}
+
+function ViewingHistory() {
+  const [history, setHistory] = useState<any[]>([]);
+
+  useEffect(() => {
+    setHistory(storageManager.getHistory().slice(0, 4));
+  }, []);
+
+  if (history.length === 0) return null;
+
+  return (
+    <section className="py-20 md:py-32">
+      <div className="container-narrow">
+        <div className="space-y-16">
+          {/* Section Header */}
+          <div className="space-y-4 text-center max-w-2xl mx-auto">
+            <h2 className="text-section-title">Continue Browsing</h2>
+            <p className="text-muted">Recently viewed items</p>
+          </div>
+
+          {/* History Grid */}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {history.map((item) => (
+              <Link key={item.id} href={item.type === 'product' ? `/product/${item.id}` : `/category/${item.id}`}>
+                <div className="card-premium p-8 h-full flex flex-col justify-between hover-lift">
+                  <p className="text-xs uppercase tracking-widest font-semibold text-accent mb-2">{item.type}</p>
+                  <h3 className="line-clamp-2 text-card-title text-accent hover:text-blue-700 dark:hover:text-blue-300 transition-colors mb-3">
+                    {item.title}
+                  </h3>
+                  <p className="text-subtle flex items-center gap-2 group">
+                    View
+                    <ArrowRight
+                      size={14}
+                      strokeWidth={2}
+                      className="group-hover:translate-x-0.5 transition-transform"
+                    />
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

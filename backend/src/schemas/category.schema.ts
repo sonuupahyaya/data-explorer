@@ -14,7 +14,7 @@ export class Category {
   @Prop({ required: true })
   title: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   slug: string;
 
   @Prop({ default: null })
@@ -34,7 +34,6 @@ export class Category {
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
-CategorySchema.index({ slug: 1 });
 CategorySchema.index({ navigation_id: 1 });
 CategorySchema.index({ parent_id: 1 });
 CategorySchema.index({ last_scraped_at: 1 });

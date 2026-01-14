@@ -1,110 +1,130 @@
+import axios from 'axios';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
 /**
- * API Client Library
- * Centralized API communication for the frontend
+ * Generate or retrieve a persistent userId from localStorage
  */
+function getUserId(): string {
+  if (typeof window === 'undefined') return 'server';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-const API_TIMEOUT = process.env.NEXT_PUBLIC_API_TIMEOUT || 30000;
-
-interface ApiRequestOptions {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-  body?: Record<string, any>;
-  headers?: Record<string, string>;
-  timeout?: number;
-}
-
-async function apiRequest<T>(
-  endpoint: string,
-  options: ApiRequestOptions = {},
-): Promise<T> {
-  const {
-    method = 'GET',
-    body = undefined,
-    headers = {},
-    timeout = Number(API_TIMEOUT),
-  } = options;
-
-  const url = `${API_URL}${endpoint}`;
-  const requestHeaders: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...headers,
-  };
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-  try {
-    const response = await fetch(url, {
-      method,
-      headers: requestHeaders,
-      body: body ? JSON.stringify(body) : undefined,
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(
-        error.message || `API Error: ${response.status} ${response.statusText}`,
-      );
-    }
-
-    return await response.json();
-  } catch (error) {
-    clearTimeout(timeoutId);
-    if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error('API request timeout');
-    }
-    throw error;
+  let userId = localStorage.getItem('userId');
+  if (!userId) {
+    userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem('userId', userId);
   }
+  return userId;
 }
 
-export const api = {
-  // Navigation
-  navigation: {
-    getAll: () => apiRequest('/api/navigation'),
-    getCategories: (slug: string) => apiRequest(`/api/navigation/${slug}`),
-    refresh: () => apiRequest('/api/navigation/refresh', { method: 'POST' }),
-  },
+export const api = axios.create({
+  baseURL: API_BASE,
+  timeout: 10000,
+  withCredentials: true, // Enable sending cookies
+});
 
-  // Products
-  products: {
-    list: (params: Record<string, any>) => {
-      const searchParams = new URLSearchParams();
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          searchParams.append(key, String(value));
-        }
-      });
-      return apiRequest(`/api/products?${searchParams.toString()}`);
-    },
-    getDetail: (id: string) => apiRequest(`/api/products/${id}`),
-    refresh: (id: string) => apiRequest(`/api/products/${id}/refresh`, { method: 'POST' }),
-  },
+// Add userId to every request header as fallback
+api.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    config.headers['X-User-Id'] = getUserId();
+  }
+  return config;
+});
 
-  // Search
-  search: {
-    query: (q: string, limit?: number) =>
-      apiRequest(`/api/search?query=${encodeURIComponent(q)}&limit=${limit || 20}`),
-    autocomplete: (q: string) =>
-      apiRequest(`/api/search/autocomplete?query=${encodeURIComponent(q)}`),
-    filters: () => apiRequest('/api/search/filters'),
-  },
+// Categories API
+export const getCategories = async () => {
+  const response = await api.get('/categories');
+  return response.data;
+};
 
-  // History
-  history: {
-    record: (data: Record<string, any>) =>
-      apiRequest('/api/history', { method: 'POST', body: data }),
-    get: (userId?: string, limit?: number) => {
-      const params = new URLSearchParams();
-      if (userId) params.append('user_id', userId);
-      if (limit) params.append('limit', String(limit));
-      return apiRequest(`/api/history?${params.toString()}`);
-    },
-    popular: () => apiRequest('/api/history/popular'),
-    analytics: () => apiRequest('/api/history/analytics'),
-  },
+// Books/Products API
+export const getBooks = async (params?: { category?: string; limit?: number; offset?: number; search?: string }) => {
+  const response = await api.get('/products', { params });
+  return response.data;
+};
+
+// Single Book/Product API
+export const getBook = async (id: string) => {
+  const response = await api.get(`/products/${id}`);
+  return response.data;
+};
+
+// Cart API
+export const getCart = async () => {
+  const response = await api.get('/cart');
+  return response.data;
+};
+
+export const addToCart = async (productId: string, quantity: number = 1) => {
+  const response = await api.post('/cart/add', {
+    productId,
+    quantity,
+  });
+  return response.data;
+};
+
+export const updateCartQuantity = async (productId: string, quantity: number) => {
+  const response = await api.post(`/cart/${productId}/quantity`, {
+    quantity,
+  });
+  return response.data;
+};
+
+export const removeFromCart = async (productId: string) => {
+  const response = await api.delete(`/cart/${productId}`);
+  return response.data;
+};
+
+export const clearCart = async () => {
+  const response = await api.delete('/cart');
+  return response.data;
+};
+
+// SavedForLater API
+export const getSavedItems = async () => {
+  const response = await api.get('/saved');
+  return response.data;
+};
+
+export const saveForLater = async (productId: string) => {
+  const response = await api.post('/saved/add', {
+    productId,
+  });
+  return response.data;
+};
+
+export const checkIfSaved = async (productId: string) => {
+  const response = await api.get(`/saved/${productId}/is-saved`);
+  return response.data;
+};
+
+export const removeFromSaved = async (productId: string) => {
+  const response = await api.delete(`/saved/${productId}`);
+  return response.data;
+};
+
+export const clearSavedItems = async () => {
+  const response = await api.delete('/saved');
+  return response.data;
+};
+
+// Image proxy
+// CRITICAL: Only proxy external URLs, not already-proxied URLs
+export const getProxiedImage = (url: string) => {
+  if (!url) return '/images/placeholder-book.svg';
+
+  // If the URL is already a proxied URL or a local static file, return as-is
+  if (url.includes('/api/image') || url.startsWith('/')) {
+    return url;
+  }
+
+  // Only proxy external URLs (http/https)
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    const encoded = encodeURIComponent(url);
+    return `${API_BASE}/image?url=${encoded}`;
+  }
+
+  // Fallback
+  return '/images/placeholder-book.svg';
 };
 
 export default api;

@@ -5,10 +5,10 @@ export type ProductDocument = Product & Document;
 
 @Schema({ timestamps: true })
 export class Product {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, index: true })
   source_id: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, index: true })
   source_url: string;
 
   @Prop({ required: true })
@@ -58,8 +58,6 @@ export class Product {
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
-ProductSchema.index({ source_id: 1 });
-ProductSchema.index({ source_url: 1 });
 ProductSchema.index({ title: 'text', author: 'text' });
 ProductSchema.index({ last_scraped_at: 1 });
 ProductSchema.index({ categories: 1 });

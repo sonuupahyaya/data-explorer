@@ -30,19 +30,15 @@ export class ProductsService {
   ) {}
 
   /**
-   * Convert original image URL to proxied URL
-   * This prevents CORS and hotlink blocking issues
+   * Return original image URL without proxying at backend level
+   * The frontend will proxy via getProxiedImage() which prevents double-proxying
    */
   private getProxiedImageUrl(originalUrl: string | null): string | null {
     if (!originalUrl) return null;
     
-    try {
-      const apiUrl = process.env.API_URL || 'http://localhost:3001';
-      return `${apiUrl}/api/image?url=${encodeURIComponent(originalUrl)}`;
-    } catch (error) {
-      this.logger.warn(`Failed to create proxied URL for: ${originalUrl}`);
-      return originalUrl; // Fallback to original
-    }
+    // Return the original URL - let frontend handle proxying
+    // This prevents the double-proxy infinite loop issue
+    return originalUrl;
   }
 
   /**
@@ -87,16 +83,17 @@ export class ProductsService {
     const total = await this.productModel.countDocuments(query).exec();
     const products = await this.productModel
       .find(query)
-      .select('title author price currency image_url rating_avg reviews_count source_url')
+      .select('_id title author price currency image_url rating_avg reviews_count source_url')
       .sort(sortField)
       .skip(skip)
       .limit(limit)
       .lean()
       .exec();
 
-    // Convert image URLs to proxied URLs
+    // Convert image URLs to proxied URLs and map _id to id
     const productsWithProxiedImages = products.map(product => ({
       ...product,
+      id: product._id?.toString(),
       image_url: this.getProxiedImageUrl(product.image_url),
     }));
 
@@ -138,6 +135,7 @@ export class ProductsService {
     const productObj = product.toObject();
     return {
       ...productObj,
+      id: productObj._id?.toString(),
       image_url: this.getProxiedImageUrl(productObj.image_url),
       reviews,
     };

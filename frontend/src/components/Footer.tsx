@@ -1,89 +1,95 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-gray-100 border-t border-gray-200 mt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* About */}
-          <div>
-            <h3 className="font-bold text-lg mb-4">About</h3>
-            <p className="text-gray-600 text-sm">
-              World of Books Discovery Platform provides powerful search and discovery tools for browsing books from World of Books.
-            </p>
+    <footer className="border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 transition-colors duration-300">
+      <div className="mx-auto max-w-6xl px-6 py-16">
+        <div className="grid gap-12 md:grid-cols-4">
+          {/* Brand */}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-accent-600 to-secondary-600 bg-clip-text text-transparent">
+                BookVault
+              </h2>
+              <p className="text-sm text-primary-600 dark:text-neutral-400 leading-relaxed">
+                Your gateway to luxury reading. Explore thousands of premium books from our curated collection.
+              </p>
+            </div>
           </div>
 
-          {/* Links */}
-          <div>
-            <h3 className="font-bold text-lg mb-4">Links</h3>
-            <ul className="space-y-2 text-sm">
+          {/* Navigation */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-primary-900 dark:text-neutral-100">Navigation</h3>
+            <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/" className="text-gray-600 hover:text-blue-600 transition">
+                <Link
+                  href="/"
+                  className="text-primary-600 dark:text-neutral-400 hover:text-accent-600 dark:hover:text-accent-500 transition-colors duration-250"
+                >
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/search" className="text-gray-600 hover:text-blue-600 transition">
-                  Search
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-gray-600 hover:text-blue-600 transition">
+                <Link
+                  href="/about"
+                  className="text-primary-600 dark:text-neutral-400 hover:text-accent-600 dark:hover:text-accent-500 transition-colors duration-250"
+                >
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-600 hover:text-blue-600 transition">
+                <Link
+                  href="/contact"
+                  className="text-primary-600 dark:text-neutral-400 hover:text-accent-600 dark:hover:text-accent-500 transition-colors duration-250"
+                >
                   Contact
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Documentation */}
-          <div>
-            <h3 className="font-bold text-lg mb-4">Documentation</h3>
-            <ul className="space-y-2 text-sm">
+          {/* Resources */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-primary-900 dark:text-neutral-100">Resources</h3>
+            <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/readme" className="text-gray-600 hover:text-blue-600 transition">
-                  README
-                </Link>
+                <a
+                  href="#"
+                  className="text-primary-600 dark:text-neutral-400 hover:text-accent-600 dark:hover:text-accent-500 transition-colors duration-250"
+                >
+                  Privacy Policy
+                </a>
               </li>
               <li>
                 <a
-                  href="http://localhost:3001/api/docs"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-blue-600 transition"
+                  href="#"
+                  className="text-primary-600 dark:text-neutral-400 hover:text-accent-600 dark:hover:text-accent-500 transition-colors duration-250"
                 >
-                  API Docs
+                  Terms of Service
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Contact */}
-          <div>
-            <h3 className="font-bold text-lg mb-4">Contact</h3>
-            <p className="text-gray-600 text-sm">
-              Have questions? Get in touch with us!
+          {/* About */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-primary-900 dark:text-neutral-100">Premium Quality</h3>
+            <p className="text-sm text-primary-600 dark:text-neutral-400 leading-relaxed">
+              Crafted with premium design principles. Every book chosen for quality, every detail designed for elegance.
             </p>
-            <Link
-              href="/contact"
-              className="text-blue-600 hover:text-blue-800 transition font-semibold text-sm mt-2 inline-block flex items-center gap-1"
-            >
-              Contact Us
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Link>
           </div>
         </div>
 
-        <div className="border-t border-gray-300 pt-8 text-center text-gray-600 text-sm">
-          <p>&copy; 2024 World of Books Discovery Platform. All rights reserved.</p>
-          <p>Books sourced from <a href="https://www.worldofbooks.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">worldofbooks.com</a></p>
+        {/* Divider */}
+        <div className="my-12 border-t border-neutral-200 dark:border-neutral-800" />
+
+        {/* Copyright */}
+        <div className="text-center text-sm text-primary-600 dark:text-neutral-400">
+          <p>&copy; {currentYear} BookVault. All rights reserved. Premium book discovery, refined.</p>
         </div>
       </div>
     </footer>

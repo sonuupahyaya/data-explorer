@@ -7,6 +7,8 @@ import { HistoryModule } from './history/history.module';
 import { SearchModule } from './search/search.module';
 import { ScraperModule } from './scraper/scraper.module';
 import { ImageProxyModule } from './image-proxy/image-proxy.module';
+import { CartModule } from './cart/cart.module';
+import { SavedForLaterModule } from './saved-for-later/saved-for-later.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { ImageProxyModule } from './image-proxy/image-proxy.module';
     HistoryModule,
     SearchModule,
     ImageProxyModule,
+    CartModule,
+    SavedForLaterModule,
   ],
 })
 export class AppModule {}

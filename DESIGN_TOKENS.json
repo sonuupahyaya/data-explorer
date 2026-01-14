@@ -1,0 +1,388 @@
+{
+  "brand": {
+    "name": "BookVault",
+    "tagline": "Premium Book Discovery Platform",
+    "philosophy": "Apple + Stripe + Luxury Bookstore"
+  },
+  
+  "colors": {
+    "primary": {
+      "sapphire": {
+        "name": "Sapphire Blue",
+        "hex": "#3B7FFF",
+        "usage": "Primary accent, buttons, links, focus states",
+        "palette": {
+          "50": "#F0F5FF",
+          "100": "#E0EBFF",
+          "200": "#C0D6FF",
+          "300": "#A0C2FF",
+          "400": "#6B9EFF",
+          "500": "#3B7FFF",
+          "600": "#2E5FD8",
+          "700": "#2449B0",
+          "800": "#1A3488",
+          "900": "#0F1E50"
+        }
+      },
+      
+      "emerald": {
+        "name": "Emerald Green",
+        "hex": "#1F8A50",
+        "usage": "Secondary accent, CTAs, sustainability",
+        "palette": {
+          "50": "#E8F5F1",
+          "100": "#C0E6DC",
+          "200": "#7ACBB0",
+          "300": "#4FB58E",
+          "400": "#369F6E",
+          "500": "#1F8A50",
+          "600": "#17664A",
+          "700": "#10443D",
+          "800": "#0A2A2A",
+          "900": "#051515"
+        }
+      }
+    },
+    
+    "background": {
+      "light": {
+        "primary": "#FAFAF9",
+        "name": "Pearl White",
+        "usage": "Main background, light mode"
+      },
+      "dark": {
+        "primary": "#1A1715",
+        "name": "Obsidian Black",
+        "usage": "Main background, dark mode"
+      }
+    },
+    
+    "text": {
+      "light": {
+        "primary": "#030200",
+        "secondary": "#4A4844",
+        "tertiary": "#787470"
+      },
+      "dark": {
+        "primary": "#FAFAF9",
+        "secondary": "#D8D6D0",
+        "tertiary": "#A8A6A0"
+      }
+    },
+    
+    "accessibility": {
+      "contrast_ratios": {
+        "AAA": "7:1 or higher",
+        "AA": "4.5:1 or higher",
+        "wcag_compliance": "AA (all text)"
+      },
+      "tested": true,
+      "color_blindness_safe": true
+    }
+  },
+  
+  "typography": {
+    "font_family": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    "font_url": "system fonts (no external requests)",
+    
+    "scales": {
+      "hero": {
+        "size": "3rem–7rem",
+        "weight": 700,
+        "line_height": "1.2",
+        "letter_spacing": "-1.5px",
+        "usage": "Page hero titles"
+      },
+      "section_title": {
+        "size": "1.875rem–3rem",
+        "weight": 700,
+        "line_height": "1.25",
+        "letter_spacing": "-1px",
+        "usage": "Section headers"
+      },
+      "card_title": {
+        "size": "1.25rem–2rem",
+        "weight": 600,
+        "line_height": "1.25",
+        "letter_spacing": "-0.5px",
+        "usage": "Card titles, subheadings"
+      },
+      "body": {
+        "size": "1rem",
+        "weight": 400,
+        "line_height": "1.5",
+        "letter_spacing": "0px",
+        "usage": "Paragraph text"
+      },
+      "small": {
+        "size": "0.875rem",
+        "weight": 400,
+        "line_height": "1.25",
+        "letter_spacing": "0.25px",
+        "usage": "Secondary text, labels"
+      }
+    },
+    
+    "principles": {
+      "no_thin_weights": "400+ for body text",
+      "high_contrast": "7:1 minimum",
+      "readable_sizing": "16px minimum on mobile",
+      "generous_spacing": "1.5+ line height"
+    }
+  },
+  
+  "components": {
+    "cards": {
+      "card_premium": {
+        "border_radius": "1.5rem",
+        "padding": "2rem–3rem",
+        "background": "white / obsidian-50",
+        "border": "1px pearl-200 / obsidian-100",
+        "shadow": "0 4px 20px rgba(0,0,0,0.08)",
+        "hover_shadow": "0 20px 60px rgba(0,0,0,0.12)",
+        "transition": "all 350ms ease",
+        "usage": "Default card style for all components"
+      },
+      
+      "card_glass": {
+        "border_radius": "1.5rem",
+        "background": "rgba(250,250,248,0.75) / rgba(20,19,16,0.75)",
+        "backdrop_filter": "blur(12px)",
+        "border": "1px rgba(237,237,237,0.5) / rgba(59,59,59,0.1)",
+        "shadow": "inset 0 1px 2px rgba(255,255,255,0.2), 0 8px 32px rgba(0,0,0,0.08)",
+        "usage": "Forms, overlays, premium sections"
+      },
+      
+      "card_gradient": {
+        "border_radius": "1.5rem",
+        "background": "gradient-to-br from-sapphire-50 to-emerald-50",
+        "border": "1px sapphire-200/50",
+        "shadow": "0 4px 6px rgba(0,0,0,0.08)",
+        "usage": "Feature blocks, accent sections"
+      }
+    },
+    
+    "buttons": {
+      "btn_primary": {
+        "background": "gradient-to-r from-sapphire-600 to-sapphire-500",
+        "color": "white",
+        "padding": "1rem 2rem",
+        "border_radius": "1rem",
+        "font_weight": 600,
+        "cursor": "pointer",
+        "hover_effect": "gradient + shadow elevation",
+        "active_effect": "scale(0.95)",
+        "disabled_effect": "opacity 50%",
+        "usage": "Main CTAs, primary actions"
+      },
+      
+      "btn_secondary": {
+        "background": "transparent",
+        "border": "2px sapphire-600",
+        "color": "sapphire-600",
+        "padding": "1rem 2rem",
+        "border_radius": "1rem",
+        "font_weight": 600,
+        "hover_effect": "bg-sapphire-50",
+        "usage": "Secondary actions, alternatives"
+      },
+      
+      "btn_ghost": {
+        "background": "transparent",
+        "color": "sapphire-600",
+        "font_weight": 600,
+        "hover_effect": "color-sapphire-700",
+        "usage": "Text links, minimal actions"
+      }
+    },
+    
+    "inputs": {
+      "input_premium": {
+        "border_radius": "1rem",
+        "border": "1px pearl-200 / obsidian-100",
+        "background": "pearl-50 / obsidian-50",
+        "padding": "1rem 1.5rem",
+        "font_size": "1rem",
+        "focus_ring": "2px sapphire-600",
+        "transition": "all 250ms",
+        "shadow": "0 1px 2px rgba(0,0,0,0.05)",
+        "usage": "Text inputs, form fields"
+      },
+      
+      "textarea_premium": {
+        "border_radius": "1rem",
+        "border": "1px pearl-200 / obsidian-100",
+        "background": "pearl-50 / obsidian-50",
+        "padding": "1rem 1.5rem",
+        "font_size": "1rem",
+        "resize": "none",
+        "focus_ring": "2px sapphire-600",
+        "transition": "all 250ms",
+        "usage": "Multi-line text inputs, messages"
+      }
+    }
+  },
+  
+  "animations": {
+    "durations": {
+      "instant": "0ms",
+      "fast": "250ms",
+      "medium": "350ms",
+      "slow": "500ms",
+      "slow_long": "800ms",
+      "continuous": "6s–30s"
+    },
+    
+    "timing_functions": {
+      "ease_out": "cubic-bezier(0.4, 0, 0.6, 1)",
+      "ease_in_out": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "smooth": "cubic-bezier(0.4, 0, 0.2, 1)"
+    },
+    
+    "entrance": {
+      "fade_in_up": {
+        "duration": "500ms",
+        "effect": "opacity 0→1 + translateY(16px→0)",
+        "usage": "Page content, hero text"
+      },
+      "scale_in": {
+        "duration": "400ms",
+        "effect": "opacity 0→1 + scale(0.95→1)",
+        "usage": "Cards, images"
+      },
+      "slide_in_left": {
+        "duration": "600ms",
+        "effect": "opacity 0→1 + translateX(-40px→0)",
+        "usage": "Side content, sidebar"
+      }
+    },
+    
+    "continuous": {
+      "drift": {
+        "duration": "20s",
+        "effect": "infinite background shape movement",
+        "usage": "Background decorative shapes"
+      },
+      "drift_slow": {
+        "duration": "30s",
+        "effect": "slower background movement",
+        "usage": "Secondary background shapes"
+      },
+      "gentle_float": {
+        "duration": "8s",
+        "effect": "vertical floating motion",
+        "usage": "Emphasis shapes"
+      }
+    },
+    
+    "interactive": {
+      "hover_lift": {
+        "effect": "translateY(-4px)",
+        "duration": "250ms",
+        "usage": "Cards on hover"
+      },
+      "hover_glow": {
+        "effect": "box-shadow glow",
+        "duration": "250ms",
+        "usage": "Focus states"
+      }
+    },
+    
+    "principles": {
+      "no_distracting_animations": true,
+      "smooth_not_bouncy": true,
+      "purposeful_not_gratuitous": true,
+      "respects_prefers_reduced_motion": true
+    }
+  },
+  
+  "shadows": {
+    "thin": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    "soft": "0 4px 6px -1px rgba(0, 0, 0, 0.08)",
+    "card": "0 1px 3px 0 rgba(0, 0, 0, 0.08)",
+    "elevated": "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+    "hover": "0 20px 25px -5px rgba(0, 0, 0, 0.12)",
+    "modal": "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
+    "luxury": "0 4px 20px rgba(0, 0, 0, 0.08)",
+    "luxury_hover": "0 20px 60px rgba(0, 0, 0, 0.12)",
+    "glow_sapphire": "0 0 20px rgba(59, 127, 255, 0.25)",
+    "glow_sapphire_lg": "0 0 40px rgba(59, 127, 255, 0.35)"
+  },
+  
+  "spacing": {
+    "scale": "0.25rem increments",
+    "sections": {
+      "vertical_padding": "80px–96px",
+      "horizontal_padding": "24px (mobile) → 40px (desktop)",
+      "max_width": "1920px container"
+    },
+    "components": {
+      "card_padding": "32px–48px",
+      "card_gap": "24px–64px",
+      "text_spacing": "16px–64px between blocks"
+    }
+  },
+  
+  "responsive": {
+    "breakpoints": {
+      "mobile": "320px–640px",
+      "tablet": "641px–1024px",
+      "desktop": "1025px–1280px",
+      "wide": "1281px+"
+    },
+    "approach": "mobile-first",
+    "tested_devices": [
+      "iPhone SE (375px)",
+      "iPhone 14 (390px)",
+      "iPad (768px)",
+      "MacBook Air (1440px)",
+      "Desktop (2560px+)"
+    ]
+  },
+  
+  "accessibility": {
+    "wcag_level": "AA",
+    "color_contrast": {
+      "normal_text": "4.5:1 minimum",
+      "large_text": "3:1 minimum",
+      "graphics": "3:1 minimum"
+    },
+    "keyboard": "fully accessible",
+    "screen_reader": "supported",
+    "focus_visible": "sapphire ring outline",
+    "motion": "respects prefers-reduced-motion",
+    "form_labels": "associated with inputs",
+    "semantic_html": "used throughout"
+  },
+  
+  "performance": {
+    "css_size": "~50KB gzipped",
+    "fonts": "system fonts (no external requests)",
+    "animations": "GPU-accelerated (transforms, opacity)",
+    "frame_rate": "60 fps",
+    "no_jank": true
+  },
+  
+  "usage_guidelines": {
+    "dos": [
+      "Use sapphire for primary actions",
+      "Use emerald for secondary/accent actions",
+      "Use card-premium for containers",
+      "Use generous spacing",
+      "Use high contrast text",
+      "Use smooth transitions",
+      "Use rounded corners (minimum 1rem)",
+      "Use GPU-accelerated animations"
+    ],
+    "donts": [
+      "Don't use bright neon colors",
+      "Don't use thin fonts for body text",
+      "Don't use harsh shadows or glows",
+      "Don't use sharp corners (no rounded-none)",
+      "Don't use cramped spacing",
+      "Don't use low contrast",
+      "Don't use more than 3 colors per component",
+      "Don't use distracting animations"
+    ]
+  }
+}

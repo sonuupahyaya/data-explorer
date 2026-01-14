@@ -44,7 +44,7 @@ export class ProductsController {
   @ApiOperation({ summary: 'Get product detail' })
   @ApiResponse({ status: 200, description: 'Product detail with reviews' })
   async getProductDetail(@Param('id') id: string) {
-    if (!id || id.length === 0) {
+    if (!id || id.length === 0 || id === 'undefined') {
       throw new BadRequestException('Product ID is required');
     }
     return this.productsService.getProductDetail(id);
@@ -54,7 +54,7 @@ export class ProductsController {
   @ApiOperation({ summary: 'Refresh product data' })
   @ApiResponse({ status: 200, description: 'Product refreshed' })
   async refreshProduct(@Param('id') id: string) {
-    if (!id || id.length === 0) {
+    if (!id || id.length === 0 || id === 'undefined') {
       throw new BadRequestException('Product ID is required');
     }
     return this.productsService.refreshProduct(id);

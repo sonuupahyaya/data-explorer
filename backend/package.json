@@ -16,6 +16,7 @@
     "seed:worldofbooks": "ts-node src/seed-worldofbooks.ts",
     "seed:real-worldofbooks": "ts-node src/seed-real-worldofbooks.ts",
     "seed:real-data": "ts-node src/seed-real-data.ts",
+    "populate:categories": "ts-node src/cli/populate-categories.ts",
     "scrape:navigation": "ts-node src/cli/scrape-navigation.ts",
     "scrape:fiction": "ts-node src/cli/scrape-fiction.ts",
     "verify:production": "ts-node src/verify-production.ts"
