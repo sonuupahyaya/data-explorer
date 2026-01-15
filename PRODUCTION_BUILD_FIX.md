@@ -4,7 +4,8 @@
 
 ### 1. Backend TypeScript Configuration
 - Created `tsconfig.build.json` with proper exclusions for tests
-- Updated `tsconfig.json` to exclude test files and remove DOM lib
+- Updated `tsconfig.json` to exclude test files
+- Kept "dom" in lib (needed for scraper DOM API types)
 - Set `types: ["node"]` only for production builds
 
 ### 2. Package.json Build Scripts
