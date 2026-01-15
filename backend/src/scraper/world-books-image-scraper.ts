@@ -288,7 +288,7 @@ export class WorldBooksImageScraperService {
           // Get specs
           const specs = await page.evaluate(() => {
             const specs: Record<string, string> = {};
-            const rows = document.querySelectorAll('tr, dt, [class*="spec"]');
+            const rows = Array.from(document.querySelectorAll('tr, dt, [class*="spec"]'));
 
             for (const row of rows) {
               const text = row.textContent?.toLowerCase() || '';
