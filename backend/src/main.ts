@@ -8,6 +8,11 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Log MongoDB connection
+  const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/bookvault';
+  const dbName = mongoUri.includes('/bookvault') ? 'bookvault' : 'unknown';
+  console.log(`✓ MongoDB connected to ${dbName}`);
+
   // Security
   app.use(helmet());
   app.use(

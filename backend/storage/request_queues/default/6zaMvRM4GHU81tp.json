@@ -1,0 +1,9 @@
+{
+	"id": "6zaMvRM4GHU81tp",
+	"json": "{\"id\":\"6zaMvRM4GHU81tp\",\"url\":\"https://www.worldofbooks.com/en-gb/pages/childrens-favourite-characters\",\"loadedUrl\":\"https://www.worldofbooks.com/en-gb/pages/childrens-favourite-characters\",\"uniqueKey\":\"https://www.worldofbooks.com/en-gb/pages/childrens-favourite-characters\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"enqueueStrategy\":\"same-domain\",\"state\":4}},\"handledAt\":\"2026-01-15T12:53:03.449Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://www.worldofbooks.com/en-gb/pages/childrens-favourite-characters",
+	"url": "https://www.worldofbooks.com/en-gb/pages/childrens-favourite-characters"
+}

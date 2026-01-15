@@ -1,0 +1,9 @@
+{
+	"id": "M0UlkXOL1rdYbby",
+	"json": "{\"id\":\"M0UlkXOL1rdYbby\",\"url\":\"https://www.worldofbooks.com/en-gb/children\",\"loadedUrl\":\"https://www.worldofbooks.com/en-gb/children\",\"uniqueKey\":\"https://www.worldofbooks.com/en-gb/children\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":1,\"errorMessages\":[\"Error: Navigation timed out after 30 seconds.\\n    at handleRequestTimeout (C:\\\\Users\\\\Sonuu\\\\Desktop\\\\data explorer\\\\backend\\\\node_modules\\\\@crawlee\\\\src\\\\crawlers\\\\crawler_utils.ts:13:11)\\n    at PlaywrightCrawler._handleNavigationTimeout (C:\\\\Users\\\\Sonuu\\\\Desktop\\\\data explorer\\\\backend\\\\node_modules\\\\@crawlee\\\\src\\\\internals\\\\browser-crawler.ts:695:33)\\n    at PlaywrightCrawler._handleNavigation (C:\\\\Users\\\\Sonuu\\\\Desktop\\\\data explorer\\\\backend\\\\node_modules\\\\@crawlee\\\\src\\\\internals\\\\browser-crawler.ts:658:24)\\n    at async PlaywrightCrawler._runRequestHandler (C:\\\\Users\\\\Sonuu\\\\Desktop\\\\data explorer\\\\backend\\\\node_modules\\\\@crawlee\\\\src\\\\internals\\\\browser-crawler.ts:553:13)\\n    at async PlaywrightCrawler._runRequestHandler (C:\\\\Users\\\\Sonuu\\\\Desktop\\\\data explorer\\\\backend\\\\node_modules\\\\@crawlee\\\\src\\\\internals\\\\playwright-crawler.ts:243:9)\\n    at async wrap (C:\\\\Users\\\\Sonuu\\\\Desktop\\\\data explorer\\\\backend\\\\node_modules\\\\@apify\\\\src\\\\index.ts:77:27)\"],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2026-01-15T12:54:25.349Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 1,
+	"uniqueKey": "https://www.worldofbooks.com/en-gb/children",
+	"url": "https://www.worldofbooks.com/en-gb/children"
+}

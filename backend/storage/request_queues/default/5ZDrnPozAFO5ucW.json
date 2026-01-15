@@ -1,0 +1,9 @@
+{
+	"id": "5ZDrnPozAFO5ucW",
+	"json": "{\"id\":\"5ZDrnPozAFO5ucW\",\"url\":\"https://www.worldofbooks.com/en-gb/pages/swym-wishlist\",\"loadedUrl\":\"https://www.worldofbooks.com/en-gb/pages/swym-wishlist\",\"uniqueKey\":\"https://www.worldofbooks.com/en-gb/pages/swym-wishlist\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"enqueueStrategy\":\"same-domain\",\"state\":4}},\"handledAt\":\"2026-01-15T12:53:08.393Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://www.worldofbooks.com/en-gb/pages/swym-wishlist",
+	"url": "https://www.worldofbooks.com/en-gb/pages/swym-wishlist"
+}

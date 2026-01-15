@@ -1,0 +1,9 @@
+{
+	"id": "1PMx2KQcfpTo1ap",
+	"json": "{\"id\":\"1PMx2KQcfpTo1ap\",\"url\":\"https://www.worldofbooks.com/en-gb/pages/teenage-and-young-adult-books\",\"loadedUrl\":\"https://www.worldofbooks.com/en-gb/pages/teenage-and-young-adult-books\",\"uniqueKey\":\"https://www.worldofbooks.com/en-gb/pages/teenage-and-young-adult-books\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"enqueueStrategy\":\"same-domain\",\"state\":4}},\"handledAt\":\"2026-01-15T12:52:44.400Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://www.worldofbooks.com/en-gb/pages/teenage-and-young-adult-books",
+	"url": "https://www.worldofbooks.com/en-gb/pages/teenage-and-young-adult-books"
+}

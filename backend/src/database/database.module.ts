@@ -10,10 +10,7 @@ import { ViewHistory, ViewHistorySchema } from '../schemas/view-history.schema';
 @Module({
   imports: [
     MongooseModule.forRoot(
-      process.env.MONGODB_URI || 'mongodb://localhost:27017/world_of_books',
-      {
-        dbName: process.env.MONGODB_DB_NAME || 'world_of_books',
-      },
+      process.env.MONGO_URI || 'mongodb://localhost:27017/bookvault',
     ),
     MongooseModule.forFeature([
       { name: Navigation.name, schema: NavigationSchema },

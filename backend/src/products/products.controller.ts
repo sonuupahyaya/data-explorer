@@ -9,6 +9,14 @@ export class ProductsController {
 
   constructor(private readonly productsService: ProductsService) {}
 
+  @Get('all')
+  @ApiOperation({ summary: 'Get all products - auto-scrapes if DB is empty' })
+  @ApiResponse({ status: 200, description: 'All available products with auto-scraping' })
+  async findAll() {
+    this.logger.log('GET /api/products/all - Calling findAll()');
+    return this.productsService.findAll();
+  }
+
   @Get()
   @ApiOperation({ summary: 'Get products with pagination and filtering' })
   @ApiQuery({ name: 'sample', required: false, type: Boolean, description: 'Get sample seeded products' })
@@ -58,6 +66,14 @@ export class ProductsController {
       throw new BadRequestException('Product ID is required');
     }
     return this.productsService.refreshProduct(id);
+  }
+
+  @Post('scrape/force-all')
+  @ApiOperation({ summary: '🔥 FORCE SCRAPE ALL - Clears DB and scrapes everything' })
+  @ApiResponse({ status: 200, description: 'Force scraping completed' })
+  async forceScrapeAll() {
+    this.logger.log('🔥🔥🔥 FORCE SCRAPE ALL - Starting forced scrape of all categories!');
+    return this.productsService.forceScrapeAll();
   }
 
   @Post('scrape/category/:slug')

@@ -1,0 +1,9 @@
+{
+	"id": "mDX048ZBGy7SHaB",
+	"json": "{\"id\":\"mDX048ZBGy7SHaB\",\"url\":\"https://www.worldofbooks.com/en-gb/pages/childrens\",\"loadedUrl\":\"https://www.worldofbooks.com/en-gb/pages/childrens\",\"uniqueKey\":\"https://www.worldofbooks.com/en-gb/pages/childrens\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"enqueueStrategy\":\"same-domain\",\"state\":4}},\"handledAt\":\"2026-01-15T12:52:31.185Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://www.worldofbooks.com/en-gb/pages/childrens",
+	"url": "https://www.worldofbooks.com/en-gb/pages/childrens"
+}

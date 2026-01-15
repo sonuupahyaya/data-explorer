@@ -13,7 +13,7 @@ const logger = new Logger('WorldOfBooksSeeder');
 async function seedWorldOfBooks() {
   try {
     // Connect to MongoDB
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/world_of_books';
+    const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/bookvault';
     logger.log(`📦 Connecting to MongoDB: ${mongoUri}`);
 
     const connection = await connect(mongoUri);

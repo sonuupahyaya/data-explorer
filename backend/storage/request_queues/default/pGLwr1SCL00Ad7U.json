@@ -1,0 +1,9 @@
+{
+	"id": "pGLwr1SCL00Ad7U",
+	"json": "{\"id\":\"pGLwr1SCL00Ad7U\",\"url\":\"https://www.worldofbooks.com/en-gb/pages/music-film\",\"loadedUrl\":\"https://www.worldofbooks.com/en-gb/pages/music-film\",\"uniqueKey\":\"https://www.worldofbooks.com/en-gb/pages/music-film\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"enqueueStrategy\":\"same-domain\",\"state\":4}},\"handledAt\":\"2026-01-15T12:53:24.958Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://www.worldofbooks.com/en-gb/pages/music-film",
+	"url": "https://www.worldofbooks.com/en-gb/pages/music-film"
+}

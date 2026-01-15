@@ -53,7 +53,7 @@ async function verifyProduction(): Promise<VerificationResult> {
     logger.log(`${'='.repeat(70)}\n`);
 
     // Connect to MongoDB
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/world_of_books';
+    const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/bookvault';
     logger.log(`📦 Connecting to MongoDB: ${mongoUri}`);
 
     const connection = await connect(mongoUri);

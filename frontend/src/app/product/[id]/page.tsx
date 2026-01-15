@@ -158,7 +158,7 @@ export default function ProductPage() {
   }
 
   const imageUrl = product.image_url ? getProxiedImage(product.image_url) : product.image ? getProxiedImage(product.image) : FALLBACK;
-  const productId = product._id || product.id;
+  const productId: string = product._id || product.id || '';
   const isProductSaved = savedItems.some((item: any) => (item._id || item.id) === productId);
 
   const generateWorldOfBooksUrl = () => {

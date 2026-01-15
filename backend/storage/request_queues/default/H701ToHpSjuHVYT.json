@@ -1,0 +1,9 @@
+{
+	"id": "H701ToHpSjuHVYT",
+	"json": "{\"id\":\"H701ToHpSjuHVYT\",\"url\":\"https://www.worldofbooks.com/pages/celebrating-black-authors\",\"loadedUrl\":\"https://www.worldofbooks.com/pages/celebrating-black-authors\",\"uniqueKey\":\"https://www.worldofbooks.com/pages/celebrating-black-authors\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"enqueueStrategy\":\"same-domain\",\"state\":4}},\"handledAt\":\"2026-01-15T12:54:43.652Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://www.worldofbooks.com/pages/celebrating-black-authors",
+	"url": "https://www.worldofbooks.com/pages/celebrating-black-authors"
+}

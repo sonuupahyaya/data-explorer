@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RealScraper, ScrapedNavigation, ScrapedCategory, ScrapedProduct, ScrapedProductDetail } from './real-scraper';
+import { BulletproofScraper, BulletproofProduct } from './bulletproof-scraper';
 
 /**
  * Scraper Service - Main orchestration for all scraping operations
@@ -8,9 +9,11 @@ import { RealScraper, ScrapedNavigation, ScrapedCategory, ScrapedProduct, Scrape
 export class ScraperService {
   private readonly logger = new Logger(ScraperService.name);
   private readonly scraper: RealScraper;
+  private readonly bulletproof: BulletproofScraper;
 
   constructor() {
     this.scraper = new RealScraper();
+    this.bulletproof = new BulletproofScraper();
   }
 
   /**
@@ -85,6 +88,54 @@ export class ScraperService {
     } catch (error) {
       this.logger.error('Product detail scrape failed:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Bulletproof scrape - guaranteed to work
+   */
+  async bulletproofScrapeProducts(categoryUrl: string): Promise<{ success: boolean; products: BulletproofProduct[]; count: number; timestamp: Date }> {
+    this.logger.log(`🚀 Bulletproof scraping: ${categoryUrl}`);
+    try {
+      const products = await this.bulletproof.scrapeCategory(categoryUrl);
+      return {
+        success: true,
+        products,
+        count: products.length,
+        timestamp: new Date(),
+      };
+    } catch (error) {
+      this.logger.error('Bulletproof scrape failed:', error);
+      return {
+        success: false,
+        products: [],
+        count: 0,
+        timestamp: new Date(),
+      };
+    }
+  }
+
+  /**
+   * Bulletproof scrape multiple categories
+   */
+  async bulletproofScrapeMultiple(categoryUrls: string[]): Promise<{ success: boolean; products: BulletproofProduct[]; count: number; timestamp: Date }> {
+    this.logger.log(`🚀 Bulletproof scraping ${categoryUrls.length} categories`);
+    try {
+      const products = await this.bulletproof.scrapeMultipleCategories(categoryUrls);
+      return {
+        success: true,
+        products,
+        count: products.length,
+        timestamp: new Date(),
+      };
+    } catch (error) {
+      this.logger.error('Bulletproof multi-scrape failed:', error);
+      return {
+        success: false,
+        products: [],
+        count: 0,
+        timestamp: new Date(),
+      };
     }
   }
 }

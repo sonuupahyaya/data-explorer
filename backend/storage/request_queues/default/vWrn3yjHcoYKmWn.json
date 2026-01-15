@@ -1,0 +1,9 @@
+{
+	"id": "vWrn3yjHcoYKmWn",
+	"json": "{\"id\":\"vWrn3yjHcoYKmWn\",\"url\":\"https://www.worldofbooks.com/en-gb/pages/childrens-books-ages-9-12\",\"loadedUrl\":\"https://www.worldofbooks.com/en-gb/pages/childrens-books-ages-9-12\",\"uniqueKey\":\"https://www.worldofbooks.com/en-gb/pages/childrens-books-ages-9-12\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"enqueueStrategy\":\"same-domain\",\"state\":4}},\"handledAt\":\"2026-01-15T12:52:38.229Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://www.worldofbooks.com/en-gb/pages/childrens-books-ages-9-12",
+	"url": "https://www.worldofbooks.com/en-gb/pages/childrens-books-ages-9-12"
+}

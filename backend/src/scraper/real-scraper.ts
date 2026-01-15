@@ -59,75 +59,69 @@ export class RealScraper {
     const results: ScrapedNavigation[] = [];
     const seen = new Set<string>();
 
-    const crawler = new PlaywrightCrawler(
-      {
-        maxRequestsPerCrawl: 1,
-        navigationTimeoutSecs: 30,
-        async handlePageFunction({ request, page, enqueueLinks }) {
-          this.logger.log(`📄 Processing: ${request.url}`);
+    const crawler = new PlaywrightCrawler({
+      maxRequestsPerCrawl: 20,
+      navigationTimeoutSecs: 30,
+      async requestHandler({ request, page, enqueueLinks, log }) {
+        log.info(`📄 Processing: ${request.url}`);
 
-          try {
-            // Wait for navigation to load
-            await page.waitForLoadState('domcontentloaded');
+        try {
+          // Wait for navigation to load
+          await page.waitForLoadState('domcontentloaded');
 
-            // Try to find navigation links - World of Books structure
-            const navLinks = await page.$$eval(
-              'nav a, [class*="menu"] a, [class*="navigation"] a, header a[href*="/en-gb/"]',
-              (elements) =>
-                elements
-                  .map((el) => ({
-                    text: el.textContent?.trim() || '',
-                    href: el.getAttribute('href') || '',
-                  }))
-                  .filter(
-                    (link) =>
-                      link.text &&
-                      link.href &&
-                      !link.href.includes('javascript') &&
-                      link.text.length > 0 &&
-                      link.text.length < 100,
-                  ),
-            );
+          // Try to find navigation links - World of Books structure
+          const navLinks = await page.$$eval(
+            'nav a, [class*="menu"] a, [class*="navigation"] a, header a[href*="/en-gb/"]',
+            (elements) =>
+              elements
+                .map((el) => ({
+                  text: el.textContent?.trim() || '',
+                  href: el.getAttribute('href') || '',
+                }))
+                .filter(
+                  (link) =>
+                    link.text &&
+                    link.href &&
+                    !link.href.includes('javascript') &&
+                    link.text.length > 0 &&
+                    link.text.length < 100
+                )
+          );
 
-            for (const link of navLinks) {
-              const slug = this.createSlug(link.text);
+          for (const link of navLinks) {
+            const slug = this.createSlug(link.text);
 
-              if (!seen.has(slug)) {
-                const fullUrl = link.href.startsWith('http')
-                  ? link.href
-                  : new URL(link.href, this.baseUrl).href;
+            if (!seen.has(slug)) {
+              const fullUrl = link.href.startsWith('http') ? link.href : new URL(link.href, this.baseUrl).href;
 
-                results.push({
-                  title: link.text,
-                  slug,
-                  url: fullUrl,
-                });
-
-                seen.add(slug);
-                this.logger.log(`✅ Found navigation: "${link.text}"`);
-              }
-            }
-
-            // If we found items, we're done. Otherwise try category page
-            if (results.length < 3) {
-              this.logger.log(
-                `Only found ${results.length} items on homepage, scraping categories page...`,
-              );
-              await enqueueLinks({
-                globs: [`${this.baseUrl}/categories*`],
-                limit: 1,
+              results.push({
+                title: link.text,
+                slug,
+                url: fullUrl,
               });
-            }
-          } catch (error) {
-            this.logger.error(`Error processing navigation page:`, error);
-          }
-        },
 
-        async failedRequestHandler({ request }, error) {
-          this.logger.error(`Request failed: ${request.url}`, error);
-        },
-      }
-    );
+              seen.add(slug);
+              log.info(`✅ Found navigation: "${link.text}"`);
+            }
+          }
+
+          // If we found items, we're done. Otherwise try category page
+          if (results.length < 3) {
+            log.info(`Only found ${results.length} items on homepage, scraping categories page...`);
+            await enqueueLinks({
+              globs: [`${this.baseUrl}/categories*`],
+              limit: 1,
+            });
+          }
+        } catch (error) {
+          log.error(`Error processing navigation page:`, error);
+        }
+      },
+
+      async failedRequestHandler({ request }, error) {
+        this.logger.error(`Request failed: ${request.url}`, error);
+      },
+    });
 
     try {
       await crawler.run([this.baseUrl]);
@@ -183,49 +177,48 @@ export class RealScraper {
     const seen = new Set<string>();
 
     const crawler = new PlaywrightCrawler({
-      maxRequestsPerCrawl: 1,
+      maxRequestsPerCrawl: 50,
+      maxConcurrency: 3,
       navigationTimeoutSecs: 30,
-      async handlePageFunction({ request, page }) {
-        this.logger.log(`📄 Processing categories: ${request.url}`);
+      async requestHandler({ request, page, log }) {
+        log.info(`📄 Processing categories: ${request.url}`);
 
-          try {
-            await page.waitForLoadState('domcontentloaded');
+        try {
+          await page.waitForLoadState('domcontentloaded');
 
-            // Find category links
-            const categories = await page.$$eval(
-              'a[href*="/books/"], [class*="category"] a, [class*="genre"] a',
-              (elements) =>
-                elements
-                  .slice(0, 50)
-                  .map((el) => ({
-                    title: el.textContent?.trim() || '',
-                    url: el.getAttribute('href') || '',
-                  }))
-                  .filter((cat) => cat.title && cat.url),
-            );
+          // Find category links
+          const categories = await page.$$eval(
+            'a[href*="/books/"], [class*="category"] a, [class*="genre"] a',
+            (elements) =>
+              elements
+                .slice(0, 50)
+                .map((el) => ({
+                  title: el.textContent?.trim() || '',
+                  url: el.getAttribute('href') || '',
+                }))
+                .filter((cat) => cat.title && cat.url)
+          );
 
-            for (const category of categories) {
-              const slug = this.createSlug(category.title);
+          for (const category of categories) {
+            const slug = this.createSlug(category.title);
 
-              if (!seen.has(slug) && category.title.length > 0 && category.title.length < 100) {
-                const fullUrl = category.url.startsWith('http')
-                  ? category.url
-                  : new URL(category.url, this.baseUrl).href;
+            if (!seen.has(slug) && category.title.length > 0 && category.title.length < 100) {
+              const fullUrl = category.url.startsWith('http') ? category.url : new URL(category.url, this.baseUrl).href;
 
-                results.push({
-                  title: category.title,
-                  slug,
-                  url: fullUrl,
-                  product_count: 0,
-                });
+              results.push({
+                title: category.title,
+                slug,
+                url: fullUrl,
+                product_count: 0,
+              });
 
-                seen.add(slug);
-                this.logger.log(`✅ Found category: "${category.title}"`);
-              }
+              seen.add(slug);
+              log.info(`✅ Found category: "${category.title}"`);
             }
-          } catch (error) {
-            this.logger.error('Error scraping categories:', error);
           }
+        } catch (error) {
+          log.error('Error scraping categories:', error);
+        }
       },
 
       async failedRequestHandler({ request }, error) {
@@ -253,93 +246,96 @@ export class RealScraper {
     const seen = new Set<string>();
 
     const crawler = new PlaywrightCrawler({
-      maxRequestsPerCrawl: 1,
+      maxRequestsPerCrawl: 200,
+      maxConcurrency: 3,
       navigationTimeoutSecs: 30,
-      async handlePageFunction({ request, page }) {
-        this.logger.log(`📄 Processing products page: ${request.url}`);
+      async requestHandler({ request, page, enqueueLinks, log }) {
+        log.info(`📄 Processing products page: ${request.url}`);
 
-          try {
-            await page.waitForLoadState('domcontentloaded');
+        try {
+          await page.waitForLoadState('domcontentloaded');
 
-            // Wait for products to load
-            await page.waitForSelector('[class*="product"], article, [class*="book"], .item', {
-              timeout: 10000,
-            });
+          // Wait for products to load
+          await page.waitForSelector('[class*="product"], article, [class*="book"], .item', {
+            timeout: 10000,
+          });
 
-            // Extract product data
-            const products = await page.$$eval(
-              '[class*="product"], article, [class*="book"], .item',
-              (elements) =>
-                elements.slice(0, 100).map((el) => {
-                  const titleEl = el.querySelector('h2, h3, .title, .name, a[href*="/books/"]');
-                  const linkEl = el.querySelector('a[href*="/books/"], a[href*="/product/"]');
-                  const authorEl = el.querySelector('[class*="author"], .author');
-                  const priceEl = el.querySelector('[class*="price"], .price');
-                  const imageEl = el.querySelector('img');
+          // Extract product data
+          const products = await page.$$eval('[class*="product"], article, [class*="book"], .item', (elements) =>
+            elements.slice(0, 100).map((el) => {
+              const titleEl = el.querySelector('h2, h3, .title, .name, a[href*="/books/"]');
+              const linkEl = el.querySelector('a[href*="/books/"], a[href*="/product/"]');
+              const authorEl = el.querySelector('[class*="author"], .author');
+              const priceEl = el.querySelector('[class*="price"], .price');
+              const imageEl = el.querySelector('img');
 
-                  return {
-                    title: titleEl?.textContent?.trim() || '',
-                    url: linkEl?.getAttribute('href') || '',
-                    author: authorEl?.textContent?.trim() || 'Unknown Author',
-                    priceText: priceEl?.textContent?.trim() || '0',
-                    image: imageEl?.getAttribute('src') || imageEl?.getAttribute('data-src') || '',
-                  };
-                }),
-            );
+              return {
+                title: titleEl?.textContent?.trim() || '',
+                url: linkEl?.getAttribute('href') || '',
+                author: authorEl?.textContent?.trim() || 'Unknown Author',
+                priceText: priceEl?.textContent?.trim() || '0',
+                image: imageEl?.getAttribute('src') || imageEl?.getAttribute('data-src') || '',
+              };
+            })
+          );
 
-            // Filter and process valid products
-            for (let idx = 0; idx < products.length; idx++) {
-              const product = products[idx];
+          // Filter and process valid products
+          for (let idx = 0; idx < products.length; idx++) {
+            const product = products[idx];
 
-              if (!product.title || !product.url || seen.has(product.url)) {
-                continue;
-              }
-
-              try {
-                const fullUrl = product.url.startsWith('http')
-                  ? product.url
-                  : new URL(product.url, this.baseUrl).href;
-
-                const rawImageUrl = product.image
-                   ? product.image.startsWith('http')
-                     ? product.image
-                     : new URL(product.image, this.baseUrl).href
-                   : '';
-
-                 // Proxy the image URL to bypass CORS and hotlink blocking
-                 const fullImageUrl = rawImageUrl ? proxyImageUrl(rawImageUrl) : '';
-
-                 // Extract price
-                 const priceMatch = product.priceText.match(/[\d.,]+/);
-                 const price = priceMatch ? parseFloat(priceMatch[0].replace(/,/g, '')) : 0;
-
-                 // Extract currency
-                 const currencyMatch = product.priceText.match(/[£$€¥₹]/);
-                 const currency = currencyMatch ? currencyMatch[0] : 'GBP';
-
-                 // Generate source ID from URL
-                 const idMatch = fullUrl.match(/\/books\/([^\/?]+)/);
-                 const sourceId = idMatch ? `wob_${idMatch[1]}` : `wob_${Date.now()}_${idx}`;
-
-                 results.push({
-                   source_id: sourceId,
-                   title: product.title.substring(0, 255),
-                   author: product.author.substring(0, 255),
-                   price,
-                   currency,
-                   image_url: fullImageUrl,
-                   source_url: fullUrl,
-                 });
-
-                seen.add(product.url);
-                this.logger.log(`✅ Found product: "${product.title.substring(0, 50)}"`);
-              } catch (error) {
-                this.logger.debug(`Error parsing product: ${error}`);
-              }
+            if (!product.title || !product.url || seen.has(product.url)) {
+              continue;
             }
-          } catch (error) {
-            this.logger.error('Error scraping products:', error);
+
+            try {
+              const fullUrl = product.url.startsWith('http') ? product.url : new URL(product.url, this.baseUrl).href;
+
+              const rawImageUrl = product.image
+                ? product.image.startsWith('http')
+                  ? product.image
+                  : new URL(product.image, this.baseUrl).href
+                : '';
+
+              // Proxy the image URL to bypass CORS and hotlink blocking
+              const fullImageUrl = rawImageUrl ? proxyImageUrl(rawImageUrl) : '';
+
+              // Extract price
+              const priceMatch = product.priceText.match(/[\d.,]+/);
+              const price = priceMatch ? parseFloat(priceMatch[0].replace(/,/g, '')) : 0;
+
+              // Extract currency
+              const currencyMatch = product.priceText.match(/[£$€¥₹]/);
+              const currency = currencyMatch ? currencyMatch[0] : 'GBP';
+
+              // Generate source ID from URL
+              const idMatch = fullUrl.match(/\/books\/([^\/?]+)/);
+              const sourceId = idMatch ? `wob_${idMatch[1]}` : `wob_${Date.now()}_${idx}`;
+
+              results.push({
+                source_id: sourceId,
+                title: product.title.substring(0, 255),
+                author: product.author.substring(0, 255),
+                price,
+                currency,
+                image_url: fullImageUrl,
+                source_url: fullUrl,
+              });
+
+              seen.add(product.url);
+              log.info(`✅ Found product: "${product.title.substring(0, 50)}"`);
+            } catch (error) {
+              log.debug(`Error parsing product: ${error}`);
+            }
           }
+
+          // Enqueue pagination
+          await enqueueLinks({
+            selector: 'a[href*="page"], a.next, .pagination a',
+            strategy: 'same-domain',
+          });
+        } catch (error) {
+          log.error('Error scraping products:', error);
+        }
       },
 
       async failedRequestHandler({ request }, error) {
@@ -381,115 +377,113 @@ export class RealScraper {
     const crawler = new PlaywrightCrawler({
       maxRequestsPerCrawl: 1,
       navigationTimeoutSecs: 30,
-      async handlePageFunction({ request, page }) {
-        this.logger.log(`📄 Processing product detail: ${request.url}`);
+      async requestHandler({ request, page, log }) {
+        log.info(`📄 Processing product detail: ${request.url}`);
 
-          try {
-            await page.waitForLoadState('domcontentloaded');
+        try {
+          await page.waitForLoadState('domcontentloaded');
 
-            const detail = await page.evaluate(() => {
-              const result: Record<string, any> = {
-                title: '',
-                author: '',
-                description: '',
-                publisher: '',
-                isbn: '',
-                publication_date: '',
-                price: 0,
-                currency: 'GBP',
-                rating_avg: 0,
-                reviews_count: 0,
-                image_url: '',
-                specs: {},
-              };
+          const detail = await page.evaluate(() => {
+            const result: Record<string, any> = {
+              title: '',
+              author: '',
+              description: '',
+              publisher: '',
+              isbn: '',
+              publication_date: '',
+              price: 0,
+              currency: 'GBP',
+              rating_avg: 0,
+              reviews_count: 0,
+              image_url: '',
+              specs: {},
+            };
 
-              // Extract title
-              const titleEl = document.querySelector('h1');
-              if (titleEl) {
-                result.title = titleEl.textContent?.trim() || '';
-              }
+            // Extract title
+            const titleEl = document.querySelector('h1');
+            if (titleEl) {
+              result.title = titleEl.textContent?.trim() || '';
+            }
 
-              // Extract author
-              const authorEl = document.querySelector('[class*="author"]');
-              if (authorEl) {
-                result.author = authorEl.textContent?.trim() || '';
-              }
+            // Extract author
+            const authorEl = document.querySelector('[class*="author"]');
+            if (authorEl) {
+              result.author = authorEl.textContent?.trim() || '';
+            }
 
-              // Extract description
-              const descEl = document.querySelector('[class*="description"], [class*="summary"]');
-              if (descEl) {
-                result.description = descEl.textContent?.trim() || '';
-              }
+            // Extract description
+            const descEl = document.querySelector('[class*="description"], [class*="summary"]');
+            if (descEl) {
+              result.description = descEl.textContent?.trim() || '';
+            }
 
-              // Extract price
-              const priceEl = document.querySelector('[class*="price"]');
-              if (priceEl) {
-                const priceText = priceEl.textContent?.trim() || '';
-                const priceMatch = priceText.match(/[\d.,]+/);
-                result.price = priceMatch ? parseFloat(priceMatch[0].replace(/,/g, '')) : 0;
+            // Extract price
+            const priceEl = document.querySelector('[class*="price"]');
+            if (priceEl) {
+              const priceText = priceEl.textContent?.trim() || '';
+              const priceMatch = priceText.match(/[\d.,]+/);
+              result.price = priceMatch ? parseFloat(priceMatch[0].replace(/,/g, '')) : 0;
 
-                const currencyMatch = priceText.match(/[£$€]/);
-                result.currency = currencyMatch ? currencyMatch[0] : 'GBP';
-              }
+              const currencyMatch = priceText.match(/[£$€]/);
+              result.currency = currencyMatch ? currencyMatch[0] : 'GBP';
+            }
 
-              // Extract image
-              const imageEl = document.querySelector(
-                'img[alt*="cover"], img[alt*="book"], img[src*="cover"]',
-              );
-              if (imageEl) {
-                // Note: We'll proxy this in the backend after evaluation
-                result.image_url = (imageEl as HTMLImageElement).src || '';
-              }
+            // Extract image
+            const imageEl = document.querySelector('img[alt*="cover"], img[alt*="book"], img[src*="cover"]');
+            if (imageEl) {
+              // Note: We'll proxy this in the backend after evaluation
+              result.image_url = (imageEl as HTMLImageElement).src || '';
+            }
 
-              // Extract rating and reviews
-              const ratingEl = document.querySelector('[class*="rating"], [class*="stars"]');
-              if (ratingEl) {
-                const ratingText = ratingEl.textContent?.trim() || '';
-                const ratingMatch = ratingText.match(/[\d.]+/);
-                result.rating_avg = ratingMatch ? parseFloat(ratingMatch[0]) : 0;
+            // Extract rating and reviews
+            const ratingEl = document.querySelector('[class*="rating"], [class*="stars"]');
+            if (ratingEl) {
+              const ratingText = ratingEl.textContent?.trim() || '';
+              const ratingMatch = ratingText.match(/[\d.]+/);
+              result.rating_avg = ratingMatch ? parseFloat(ratingMatch[0]) : 0;
 
-                const reviewsMatch = ratingText.match(/(\d+)\s*reviews?/i);
-                result.reviews_count = reviewsMatch ? parseInt(reviewsMatch[1], 10) : 0;
-              }
+              const reviewsMatch = ratingText.match(/(\d+)\s*reviews?/i);
+              result.reviews_count = reviewsMatch ? parseInt(reviewsMatch[1], 10) : 0;
+            }
 
-              // Extract spec details
-              const specs: Record<string, string> = {};
-              const dtElements = document.querySelectorAll('dt, [class*="label"]');
+            // Extract spec details
+            const specs: Record<string, string> = {};
+            const dtElements = document.querySelectorAll('dt, [class*="label"]');
 
-              for (let i = 0; i < Math.min(dtElements.length, 20); i++) {
-                const dt = dtElements[i];
-                const label = dt.textContent?.toLowerCase().trim() || '';
-                const dd = dt.nextElementSibling;
-                const value = dd?.textContent?.trim() || '';
+            for (let i = 0; i < Math.min(dtElements.length, 20); i++) {
+              const dt = dtElements[i];
+              const label = dt.textContent?.toLowerCase().trim() || '';
+              const dd = dt.nextElementSibling;
+              const value = dd?.textContent?.trim() || '';
 
-                if (label && value && label.length < 50) {
-                  if (label.includes('publisher')) result.publisher = value;
-                  if (label.includes('isbn')) {
-                    result.isbn = value;
-                    specs['ISBN'] = value;
-                  }
-                  if (label.includes('date') || label.includes('published')) {
-                    result.publication_date = value;
-                    specs['Publication Date'] = value;
-                  }
-
-                  specs[label.charAt(0).toUpperCase() + label.slice(1)] = value;
+              if (label && value && label.length < 50) {
+                if (label.includes('publisher')) result.publisher = value;
+                if (label.includes('isbn')) {
+                  result.isbn = value;
+                  specs['ISBN'] = value;
                 }
+                if (label.includes('date') || label.includes('published')) {
+                  result.publication_date = value;
+                  specs['Publication Date'] = value;
+                }
+
+                specs[label.charAt(0).toUpperCase() + label.slice(1)] = value;
               }
-
-              result.specs = specs;
-              return result;
-            });
-
-            Object.assign(emptyDetail, detail);
-
-            // Proxy the image URL to bypass CORS and hotlink blocking
-            if (emptyDetail.image_url) {
-              emptyDetail.image_url = proxyImageUrl(emptyDetail.image_url);
             }
-            } catch (error) {
-            this.logger.error('Error scraping product detail:', error);
-            }
+
+            result.specs = specs;
+            return result;
+          });
+
+          Object.assign(emptyDetail, detail);
+
+          // Proxy the image URL to bypass CORS and hotlink blocking
+          if (emptyDetail.image_url) {
+            emptyDetail.image_url = proxyImageUrl(emptyDetail.image_url);
+          }
+        } catch (error) {
+          log.error('Error scraping product detail:', error);
+        }
       },
 
       async failedRequestHandler({ request }, error) {

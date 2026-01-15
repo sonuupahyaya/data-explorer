@@ -1,0 +1,9 @@
+{
+	"id": "cgVpumDZKGl0uQj",
+	"json": "{\"id\":\"cgVpumDZKGl0uQj\",\"url\":\"https://www.worldofbooks.com/pages/pride-month\",\"loadedUrl\":\"https://www.worldofbooks.com/pages/pride-month\",\"uniqueKey\":\"https://www.worldofbooks.com/pages/pride-month\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":2,\"enqueueStrategy\":\"same-domain\",\"state\":4}},\"handledAt\":\"2026-01-15T12:54:37.941Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://www.worldofbooks.com/pages/pride-month",
+	"url": "https://www.worldofbooks.com/pages/pride-month"
+}

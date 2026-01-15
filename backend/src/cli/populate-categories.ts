@@ -77,7 +77,7 @@ const DEFAULT_CATEGORIES = [
 
 async function connectDatabase() {
   try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/world-of-books';
+    const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/bookvault';
     logger.log(`📦 Connecting to MongoDB: ${mongoUri}`);
     
     await mongoose.connect(mongoUri);

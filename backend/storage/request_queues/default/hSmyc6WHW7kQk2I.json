@@ -1,0 +1,9 @@
+{
+	"id": "hSmyc6WHW7kQk2I",
+	"json": "{\"id\":\"hSmyc6WHW7kQk2I\",\"url\":\"https://www.worldofbooks.com/en-gb/pages/impact-report\",\"loadedUrl\":\"https://www.worldofbooks.com/en-gb/pages/impact-report\",\"uniqueKey\":\"https://www.worldofbooks.com/en-gb/pages/impact-report\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"crawlDepth\":1,\"enqueueStrategy\":\"same-domain\",\"state\":4}},\"handledAt\":\"2026-01-15T12:53:34.520Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://www.worldofbooks.com/en-gb/pages/impact-report",
+	"url": "https://www.worldofbooks.com/en-gb/pages/impact-report"
+}

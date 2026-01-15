@@ -70,7 +70,7 @@ export default function CartPage() {
     );
   }
 
-  const shipping = 0;
+  const shipping: number = 0;
   const tax = Math.round(total * 8.5) / 100;
   const finalTotal = total + shipping + tax;
 
