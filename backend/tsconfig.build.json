@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.integration.spec.ts",
+    "**/__tests__/**",
+    "src/cli/**",
+    "src/seed*.ts",
+    "src/verify-production.ts"
+  ]
+}

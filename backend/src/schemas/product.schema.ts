@@ -62,3 +62,4 @@ ProductSchema.index({ title: 'text', author: 'text' });
 ProductSchema.index({ last_scraped_at: 1 });
 ProductSchema.index({ categories: 1 });
 ProductSchema.index({ price: 1 });
+ProductSchema.index({ source_url: 1 }, { unique: true });
